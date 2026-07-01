@@ -1,5 +1,6 @@
 import os
 import requests
+import textwrap
 from flask import Flask, request, jsonify
 from PIL import Image, ImageDraw, ImageFont
 from moviepy.editor import ImageClip, AudioFileClip
@@ -40,7 +41,7 @@ def fabricar_activo():
         else:
             return jsonify({"status": "error", "mensaje": "Falta la URL de la imagen"}), 400
 
-        # 4. Fabricar la Miniatura (Estampado)
+        # 4. Fabricar la Miniatura (Diseño Profesional Proporcional)
         ruta_fuente = "Anton-Regular.ttf"
         ruta_miniatura = "miniatura_final.jpg"
         
@@ -49,18 +50,34 @@ def fabricar_activo():
             dibujo = ImageDraw.Draw(imagen)
             
             ancho_img, alto_img = imagen.size
-            tamano_fuente = int(ancho_img * 0.111)
+            
+            # Forzamos mayúsculas para un look estético e impactante
+            titulo_impacto = titulo.upper()
+            
+            # Ajuste dinámico del tamaño de fuente (7% del ancho de la imagen)
+            tamano_fuente = int(ancho_img * 0.07)
             fuente = ImageFont.truetype(ruta_fuente, tamano_fuente)
             
-            pos_x = ancho_img * 0.039
-            pos_y = alto_img * 0.3668
+            # Cortar el texto automáticamente para que ocupe el flanco izquierdo (máx 14 caracteres por línea)
+            lineas = textwrap.wrap(titulo_impacto, width=14)
             
-            dibujo.text((pos_x+5, pos_y+5), titulo, font=fuente, fill="black")
-            dibujo.text((pos_x, pos_y), titulo, font=fuente, fill="#fff9f8")
+            # Ubicación: Superior Izquierda (5% de margen X, 15% de margen Y)
+            pos_x = ancho_img * 0.05
+            pos_y = alto_img * 0.15
+            
+            # Espaciado entre líneas proporcional al tamaño de la letra
+            alto_linea = tamano_fuente * 1.15
+            
+            for i, linea in enumerate(lineas):
+                y_actual = pos_y + (i * alto_linea)
+                # Efecto Sombra de contraste profunda (4 píxeles de desplazamiento)
+                dibujo.text((pos_x + 4, y_actual + 4), linea, font=fuente, fill="black")
+                # Texto Principal limpio
+                dibujo.text((pos_x, y_actual), linea, font=fuente, fill="#fff9f8")
             
             imagen.save(ruta_miniatura)
 
-        # 5. Fabricar el Video (Optimizado a 1 FPS para cuidar la RAM)
+        # 5. Fabricar el Video (1 FPS para proteger la RAM)
         ruta_video = "video_final.mp4"
         audio_clip = AudioFileClip(ruta_audio)
         image_clip = ImageClip(ruta_imagen).set_duration(audio_clip.duration)
@@ -68,11 +85,10 @@ def fabricar_activo():
         video = image_clip.set_audio(audio_clip)
         video.write_videofile(ruta_video, fps=1, codec="libx264", audio_codec="aac")
         
-        # Cierre preventivo de archivos para liberar memoria RAM inmediatamente
         audio_clip.close()
         image_clip.close()
 
-        # 6. Subida Automática a tu Almacén de Cloudinary
+        # 6. Subida Automática a Cloudinary
         url_miniatura_publica = ""
         url_video_publica = ""
         
@@ -84,10 +100,8 @@ def fabricar_activo():
             upload_vid = cloudinary.uploader.upload(ruta_video, resource_type="video")
             url_video_publica = upload_vid.get("secure_url", "")
 
-        # 7. Respuesta de éxito con los enlaces listos para Make
         return jsonify({
             "status": "éxito",
-            "mensaje": "Video y miniatura fabricados y almacenados con éxito.",
             "url_video": url_video_publica,
             "url_miniatura": url_miniatura_publica
         })
