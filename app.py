@@ -58,8 +58,8 @@ def fabricar_activo():
         image_clip = ImageClip(ruta_imagen).set_duration(audio_clip.duration)
         
         video = image_clip.set_audio(audio_clip)
-        # Renderizamos a 24 fps para optimizar la memoria del servidor gratuito
-        video.write_videofile(ruta_video, fps=24, codec="libx264", audio_codec="aac")
+        # Renderizamos a 1 fps para optimizar la memoria del servidor gratuito
+        video.write_videofile(ruta_video, fps=1, codec="libx264", audio_codec="aac")
         
         # Limpieza de memoria
         audio_clip.close()
