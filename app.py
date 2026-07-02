@@ -68,12 +68,12 @@ def fabricar_activo():
             # Espaciado entre líneas proporcional al tamaño de la letra
             alto_linea = tamano_fuente * 1.15
             
-            for i, linea in enumerate(lineas):
+           for i, linea in enumerate(lineas):
                 y_actual = pos_y + (i * alto_linea)
                 # Efecto Sombra de contraste profunda (4 píxeles de desplazamiento)
                 dibujo.text((pos_x + 4, y_actual + 4), linea, font=fuente, fill="black")
-                # Texto Principal limpio
-                dibujo.text((pos_x, y_actual), linea, font=fuente, fill="#fff9f8")
+                # Texto Principal con tu color amarillo personalizado
+                dibujo.text((pos_x, y_actual), linea, font=fuente, fill="#ffde59")
             
             imagen.save(ruta_miniatura)
 
