@@ -41,7 +41,7 @@ def fabricar_activo():
         else:
             return jsonify({"status": "error", "mensaje": "Falta la URL de la imagen"}), 400
 
-        # 4. Fabricar la Miniatura (Diseño Profesional Proporcional)
+      # 4. Fabricar la Miniatura (Diseño Profesional Proporcional)
         ruta_fuente = "Anton-Regular.ttf"
         ruta_miniatura = "miniatura_final.jpg"
         
@@ -50,29 +50,19 @@ def fabricar_activo():
             dibujo = ImageDraw.Draw(imagen)
             
             ancho_img, alto_img = imagen.size
-            
-            # Forzamos mayúsculas para un look estético e impactante
             titulo_impacto = titulo.upper()
-            
-            # Ajuste dinámico del tamaño de fuente (7% del ancho de la imagen)
             tamano_fuente = int(ancho_img * 0.07)
             fuente = ImageFont.truetype(ruta_fuente, tamano_fuente)
             
-            # Cortar el texto automáticamente para que ocupe el flanco izquierdo (máx 14 caracteres por línea)
             lineas = textwrap.wrap(titulo_impacto, width=14)
             
-            # Ubicación: Superior Izquierda (5% de margen X, 15% de margen Y)
             pos_x = ancho_img * 0.05
             pos_y = alto_img * 0.15
-            
-            # Espaciado entre líneas proporcional al tamaño de la letra
             alto_linea = tamano_fuente * 1.15
             
-           for i, linea in enumerate(lineas):
+            for i, linea in enumerate(lineas):
                 y_actual = pos_y + (i * alto_linea)
-                # Efecto Sombra de contraste profunda (4 píxeles de desplazamiento)
                 dibujo.text((pos_x + 4, y_actual + 4), linea, font=fuente, fill="black")
-                # Texto Principal con tu color amarillo personalizado
                 dibujo.text((pos_x, y_actual), linea, font=fuente, fill="#ffde59")
             
             imagen.save(ruta_miniatura)
