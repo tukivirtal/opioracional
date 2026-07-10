@@ -35,6 +35,21 @@ curl -X POST http://localhost:10000/fabricar \
 
 There is no test suite, linter, or build step beyond Docker.
 
+## Deploy (Render)
+
+The service runs on Render (repo `github.com/tukivirtal/opioracional`, branch `main`), built from the `Dockerfile`.
+
+1. **Service type:** Web Service, Docker environment. Render builds the `Dockerfile` (which installs `ffmpeg` — required by moviepy). No build/start command overrides needed; the image's `CMD ["python", "app.py"]` serves the app.
+2. **Port:** the app binds `0.0.0.0:10000`. Render auto-detects the exposed port from the Dockerfile `EXPOSE 10000`. If you change the port, update `app.py`, the Dockerfile, and Render together.
+3. **Environment Variables** (Render dashboard → the service → Environment): set the three Cloudinary keys. Do **not** upload `.env` — Render injects these directly.
+   ```
+   CLOUDINARY_CLOUD_NAME
+   CLOUDINARY_API_KEY
+   CLOUDINARY_API_SECRET
+   ```
+4. **Deploy:** pushing to `main` triggers an auto-deploy. After changing env vars, redeploy (Render prompts, or use "Manual Deploy → Deploy latest commit").
+5. **Free-tier note:** low-RAM instances are why the video is encoded at 1 FPS (see Architecture). Large audio files or higher FPS can OOM the instance.
+
 ## Architecture notes
 
 - **Everything runs in `fabricar_activo()`.** The whole pipeline is one request handler wrapped in a single try/except that returns `{"status": "error", "mensaje": <exc>}` with HTTP 500 on any failure. Add new steps inside this function's numbered sequence.
