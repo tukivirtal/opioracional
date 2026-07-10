@@ -1,19 +1,22 @@
 import os
 import requests
 import textwrap
+from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from PIL import Image, ImageDraw, ImageFont
 from moviepy.editor import ImageClip, AudioFileClip
 import cloudinary
 import cloudinary.uploader
 
+load_dotenv()
+
 app = Flask(__name__)
 
-# 🛠️ CONFIGURACIÓN DE CLOUDINARY: Pon tus datos entre las comillas
-cloudinary.config( 
-  cloud_name = "ddbjsjmzj", 
-  api_key = "423223392666937", 
-  api_secret = "***CLOUDINARY_SECRET_REMOVED***",
+# 🛠️ CONFIGURACIÓN DE CLOUDINARY: valores tomados de variables de entorno (ver .env.example)
+cloudinary.config(
+  cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME"),
+  api_key = os.environ.get("CLOUDINARY_API_KEY"),
+  api_secret = os.environ.get("CLOUDINARY_API_SECRET"),
   secure = True
 )
 
